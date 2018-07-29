@@ -212,3 +212,31 @@ int search(){
     return  res;
 }
 ```
+
+### Tarjan 缩点
+```
+int n,m,top,tot,sum,stk[maxn],color[maxn],cnt[maxn],dfn[maxn],low[maxn],vis[maxn],du[maxn];
+void tarjan(int v){
+    vis[v]=1;
+    stk[++top]=v;
+    dfn[v]=low[v]=++tot;
+    for(int i=0;i<G[v].size();++i){
+        if(!dfn[G[v][i]]){  
+            tarjan(G[v][i]);
+            low[v]=min(low[v],low[G[v][i]]);
+        }else if(vis[G[v][i]]){    
+            low[v]=min(low[v],low[G[v][i]]);
+        }
+    }
+    if(dfn[v]==low[v]){
+        color[v]=++sum; //缩点 染色 sum记录强联通分量
+        vis[v]=0;
+        while(stk[top]!=v){
+            vis[stk[top]]=0;
+            color[stk[top]]=sum;
+            top--;
+        }
+        top--;
+    }
+}
+```
