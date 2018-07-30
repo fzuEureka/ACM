@@ -70,119 +70,6 @@ int KMP(string T,string p)
     return ans;
 }
 ```
-### Treap
-```
-typedef  struct TreapNode* Tree;
-struct TreapNode{
-    int val;
-    int priority;
-    Tree lchild;
-    Tree rchild;
-    int lsize;
-    int rsize;
-    TreapNode(int val=0,int priority=0){
-        lchild=rchild=NULL;
-        lsize=rsize=0;
-        this->val=val;
-        this->priority=priority;
-    }
-};
-void left_rotate(Tree &node){
-    Tree temp=node->rchild;
-    node->rchild=temp->lchild;
-    node->rsize=temp->lsize;
-    temp->lsize=node->lsize+node->rsize+1;
-    temp->lchild=node;
-    node=temp;
-}
-void right_rotate(Tree &node){
-    Tree temp=node->lchild;
-    node->lchild=temp->rchild;
-    node->lsize=temp->rsize;
-    temp->rsize=node->lsize+node->rsize+1;
-    temp->rchild=node;
-    node=temp;
-}
-bool insert_val(Tree &root,Tree &node){
-    if(root==NULL){
-        root=node;
-        return true;
-    }
-    else if(root->val<node->val){
-        bool flag=insert_val(root->rchild,node);
-        if(flag)root->rsize+=1;
-        if(root->priority>node->priority)
-            left_rotate(root);
-        return  flag;
-    }
-    else if(root->val>node->val){
-        bool flag=insert_val(root->lchild,node);
-        if(flag)root->lsize+=1;
-        if(root->priority>node->priority)
-            right_rotate(root);
-        return flag;
-    }
-    delete node;
-    return false;
-}
-bool insert(Tree &root,int val,int priority){
-    Tree node=new TreapNode(val,priority);
-    return insert_val(root,node);
-}
-
-bool remove(Tree &root,int val)
-{
-
-    if (root->val>val) {
-        root->lsize-=1;
-        return remove(root->lchild, val);
-    }
-    else if(root->val<val) {
-        root->rsize-=1;
-        return remove(root->rchild, val);
-    }
-    else
-    {
-
-        if (root->lchild == NULL) {
-            root = root->rchild;
-            return true;
-        }
-        else if (root->rchild == NULL) {
-            root = root->lchild;
-
-            return true;
-        }
-        if (root->lchild->priority<root->rchild->priority){
-            right_rotate(root); root->rsize-=1;
-            remove(root->rchild,val);
-
-        }
-        else{
-            left_rotate(root);root->lsize-=1;
-            remove(root->lchild,val);
-
-        }
-    }
-}
-int Kth(Tree &root,int val){
-    if(root->lsize==val-1)
-        return root->val;
-    else if(root->lsize>val-1)return Kth(root->lchild,val);
-    else return Kth(root->rchild,val-(root->lsize+1));
-}
-
-Tree search(Tree &root,int val)
-{
-    if (!root)
-        return NULL;
-    else if (root->val>val)
-        return search(root->lchild,val);
-    else if(root->val<val)
-        return  search(root->rchild,val);
-    return root;
-}
-```
 
 ### 二分图匹配
 ```
@@ -210,5 +97,73 @@ int search(){
         }
     }
     return  res;
+}
+```
+### 线段树
+```
+const int maxn=1e5+7;
+long long sum[maxn<<2],add[maxn<<2];
+long long a[maxn],n,rt=1;
+//向上更新区间和
+void PushUp(int rt){
+    sum[rt]=sum[rt<<1]+sum[rt<<1|1];
+}
+//树状数组 
+void Build(int l,int r,int rt){
+
+    if(l==r){
+        sum[rt]=a[l];
+        return;
+    }
+    int m=(l+r)>>1;
+    Build(l,m,rt<<1);
+    Build(m+1,r,rt<<1|1);
+    PushUp(rt);
+}
+//点修改
+void Update(int L,int c,int l,int r,int rt){
+    if(l==r){
+        sum[rt]+=c;
+        return ;
+    }
+    int m=(l+r)>>1;
+    if(L<=m)Update(L,c,l,m,rt<<1);
+    else Update(L,c,m+1,r,rt<<1|1);
+    PushUp(rt);
+}
+//下推标记
+void PushDown(int rt,int ln,int rn){
+    if(add[rt]){
+        add[rt<<1]+=add[rt];
+        add[rt<<1|1]+=add[rt];
+        sum[rt<<1]+=add[rt]*ln;
+        sum[rt<<1|1]+=add[rt]*rn;
+        add[rt]=0;
+    }
+}
+//区间修改
+void Update(int L,int R,int c,int l,int r,int rt){
+    if(L<=l&&R>=r){
+        sum[rt]+=(r-l+1)*c;
+        add[rt]+=c;
+        return ;
+    }
+    int m=(l+r)>>1;
+    PushDown(rt,m-l+1,r-m);
+    if(L<=m)Update(L,R,c,l,m,rt<<1);
+    if(R>m)Update(L,R,c,m+1,r,rt<<1|1);
+    PushUp(rt);
+}
+//区间查询
+long long Query(int L,int R,int l,int r,int rt){
+    if(L<=l&&r<=R){
+        return sum[rt];
+    }
+    int m=(l+r)>>1;
+    long long  ans=0;
+    PushDown(rt,m-l+1,r-m); //记得下推标记
+    if(L<=m)ans+=Query(L,R,l,m,rt<<1);
+    if(R>m)ans+=Query(L,R,m+1,r,rt<<1|1);
+    return ans;
 }
 ```
