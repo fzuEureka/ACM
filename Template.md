@@ -98,6 +98,74 @@ int search(){
     return  res;
 }
 ```
+### 线段树
+```
+const int maxn=1e5+7;
+long long sum[maxn<<2],add[maxn<<2];
+long long a[maxn],n,rt=1;
+//向上更新区间和
+void PushUp(int rt){
+    sum[rt]=sum[rt<<1]+sum[rt<<1|1];
+}
+//树状数组 
+void Build(int l,int r,int rt){
+
+    if(l==r){
+        sum[rt]=a[l];
+        return;
+    }
+    int m=(l+r)>>1;
+    Build(l,m,rt<<1);
+    Build(m+1,r,rt<<1|1);
+    PushUp(rt);
+}
+//点修改
+void Update(int L,int c,int l,int r,int rt){
+    if(l==r){
+        sum[rt]+=c;
+        return ;
+    }
+    int m=(l+r)>>1;
+    if(L<=m)Update(L,c,l,m,rt<<1);
+    else Update(L,c,m+1,r,rt<<1|1);
+    PushUp(rt);
+}
+//下推标记
+void PushDown(int rt,int ln,int rn){
+    if(add[rt]){
+        add[rt<<1]+=add[rt];
+        add[rt<<1|1]+=add[rt];
+        sum[rt<<1]+=add[rt]*ln;
+        sum[rt<<1|1]+=add[rt]*rn;
+        add[rt]=0;
+    }
+}
+//区间修改
+void Update(int L,int R,int c,int l,int r,int rt){
+    if(L<=l&&R>=r){
+        sum[rt]+=(r-l+1)*c;
+        add[rt]+=c;
+        return ;
+    }
+    int m=(l+r)>>1;
+    PushDown(rt,m-l+1,r-m);
+    if(L<=m)Update(L,R,c,l,m,rt<<1);
+    if(R>m)Update(L,R,c,m+1,r,rt<<1|1);
+    PushUp(rt);
+}
+//区间查询
+long long Query(int L,int R,int l,int r,int rt){
+    if(L<=l&&r<=R){
+        return sum[rt];
+    }
+    int m=(l+r)>>1;
+    long long  ans=0;
+    PushDown(rt,m-l+1,r-m); //记得下推标记
+    if(L<=m)ans+=Query(L,R,l,m,rt<<1);
+    if(R>m)ans+=Query(L,R,m+1,r,rt<<1|1);
+    return ans;
+}
+```
 
 ### Tarjan 缩点
 ```
