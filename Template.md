@@ -92,10 +92,8 @@ bool dfs(int x){
 int search(){
     int res=0;
     for(int i=1;i<=n;++i){
-        if(match[i]==-1){
             memset(vis,0, sizeof(vis));
             if(dfs(i))res++;
-        }
     }
     return  res;
 }
