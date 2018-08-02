@@ -194,3 +194,65 @@ void tarjan(int v){
     }
 }
 ```
+
+### 凸包 graham_scan
+```
+const int maxn = 1e5 + 5;
+const double PI = acos(-1.0);
+struct point {
+	double x;
+	double y;
+}p[maxn];
+vector<point>G;
+//叉积 判断左转右转 左转为正
+double cross_product(point p0, point p1, point p2) {
+	return (p1.x - p0.x)*(p2.y - p0.y) - (p2.x - p0.x)*(p1.y - p0.y);
+}
+double dis(point a, point b) {
+	return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
+}
+bool cmp(point a, point b) {
+	double tmp = cross_product(p[0], a, b); //按极角大小排序，极角相同按距离小的先排;
+	if (fabs(tmp) < 1e-7) {
+		return dis(p[0], a) < dis(p[0], b);
+	}
+	return tmp > 0;
+}
+void graham_scan(int n) {
+	int top = 2;
+	int index = 0;
+	for (int i = 1; i < n; ++i)
+	{
+        //找出p[0]，纵坐标最小，当纵坐标一样，横坐标最小
+		if (p[i].y < p[index].y || (p[i].y == p[index].y && p[i].x < p[index].x))
+		{
+			index = i;
+		}
+	}
+	swap(p[0], p[index]);
+	G.push_back(p[0]);
+	sort(p + 1, p + n, cmp);
+	G.push_back(p[1]);
+	G.push_back(p[2]);
+	for (int i = 3; i < n; ++i)
+	{
+        //当发生非左转将栈顶退出 要判断栈中个数，共线时候可能发生，只剩下一个点在栈中
+		while (top > 0 && cross_product(G[top - 1], p[i], G[top]) >= 0) 
+		{
+			--top;
+			G.pop_back();
+		}
+		G.push_back(p[i]);
+		++top;
+	}
+}
+//计算凸包周长
+double cal() {
+	double res = 0.0;
+	G.push_back(p[0]);
+	for (int i = 1; i < G.size(); ++i) {
+		res += dis(G[i], G[i - 1]);
+	}
+	return res;
+}
+```
