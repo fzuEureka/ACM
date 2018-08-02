@@ -73,10 +73,13 @@ int KMP(string T,string p)
 
 
 ### 二分图匹配
+- 最小点覆盖==最大匹配数 |最小点集|=|最大匹配|
+- 最小路径覆盖==总点集合G-最大匹配数
+-  |最大独立集| = |V|-|最大匹配数|
 ```
-int 
-vis[405],match[405];
-vector<int>G[405];
+const int maxn=1e5;
+int vis[maxn],match[maxn];
+vector<int>G[maxn];
 bool dfs(int x){
     vis[x]=1;
     for(int i=0;i<G[x].size();++i){
@@ -91,6 +94,7 @@ bool dfs(int x){
 }
 int search(){
     int res=0;
+    memset(match,-1,sizeof(match));
     for(int i=1;i<=n;++i){
             memset(vis,0, sizeof(vis));
             if(dfs(i))res++;
