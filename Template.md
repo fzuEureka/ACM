@@ -327,3 +327,54 @@ scanf("%d%d", &x, &y);
 			p[tot].next = head[x];
 			head[x] = tot++;
 ```
+
+### 扩展kmp 
+- 定义母串S，和字串T，设S的长度为n，T的长度为m，求T与S的每一个后缀的最长公共前缀，也就是说，设extend数组,extend[i]表示T与S[i,n-1]的最长公共前缀，要求出所有extend[i](0<=i<n)。
+- 算法详解 [扩展kmp总结](https://blog.csdn.net/dyx404514/article/details/41831947)
+
+```
+typedef long long ll;
+const int maxn = 1e6+5;
+string S, T;
+ll nxt[maxn], ex[maxn];
+
+void getNext() {
+	int siz = T.size();
+	nxt[0] = siz;
+	int i = 0;
+	while (T[i] == T[i + 1] && i + 1 < siz)i++;
+	nxt[1] = i;
+	int p0 = 1;
+	for (int i = 2; i < siz; ++i) {
+
+		if (nxt[i - p0] + i < nxt[p0] + p0)
+			nxt[i] = nxt[i - p0];
+		else {
+			int j = nxt[p0] + p0 - i;
+			if (j < 0)j = 0;
+			while (i + j < siz&&T[j] == T[j + i])j++;
+			nxt[i] = j;
+			p0= i;
+		}
+	}
+}
+void EXKMP() {
+	int size1 = S.size(), i = 0, size2 = T.size();
+	getNext();
+	while (S[i] == T[i] && i < size1&&i < size2)i++;
+	ex[0] = i;
+	int p0 = 0;
+	for (int i = 1; i < size1; ++i) {
+		if (i + nxt[i - p0] < ex[p0] + p0)
+			ex[i] = nxt[i - p0];
+		else {
+			int j = ex[p0] + p0 - i;
+			if (j < 0)j = 0;
+			while (i + j < size1&&j < size2&&T[j] == S[i + j])
+				j++;
+			ex[i] = j;
+			p0 = i;
+		}
+	}
+}
+```
