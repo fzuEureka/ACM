@@ -261,7 +261,7 @@ double cal() {
 }
 ```
 
-#st 表
+### st表
 - 区间最大最小值 stmax[i][j] 表示i~i+2^j-1 的最大值
 ```
 const int maxn = 2e5 + 5;
@@ -326,5 +326,4 @@ scanf("%d%d", &x, &y);
 			p[tot].to = y;
 			p[tot].next = head[x];
 			head[x] = tot++;
-			du[y]++;
 ```
