@@ -260,3 +260,71 @@ double cal() {
 	return res;
 }
 ```
+
+#st 表
+- 区间最大最小值 stmax[i][j] 表示i~i+2^j-1 的最大值
+```
+const int maxn = 2e5 + 5;
+int a[maxn], b[maxn], n, stmax[maxn][20], stmin[maxn][20];
+void ST() {
+	for (int i = 1; i <= n; i++)
+	{
+		stmax[i][0] = a[i];
+		stmin[i][0] = b[i];
+	}
+	for (int j = 1; (1 << j) <= n; j++)
+	{
+		for (int i = 1; i + (1 << j) - 1 <= n; i++)
+		{
+			stmax[i][j] = max(stmax[i][j - 1], stmax[i + (1 << (j - 1))][j - 1]);
+			stmin[i][j] = min(stmin[i][j - 1], stmin[i + (1 << (j - 1))][j - 1]);
+		}
+	}
+}
+int queryMin(int s, int e) {
+	int nlog = 0;
+	while ((1 << (nlog + 1)) <= e - s + 1)nlog++;
+    //int nlog = int(log(e - s + 1) / log(2));
+	return min(stmin[s][nlog], stmin[e - (1 << nlog) + 1][nlog]);
+}
+int queryMax(int s, int e) {
+	int nlog = 0;
+	while ((1 << (nlog + 1)) <= e - s + 1)nlog++;
+    //int nlog = int(log(e - s + 1) / log(2));
+	return  max(stmax[s][nlog], stmax[e - (1 << nlog) + 1][nlog]);
+}
+```
+### 离线求lca（最近公共祖先） tarjan
+- 对每个节点 利用并查集建一颗子树，搜索道根节点向上回溯，查到第二点的时候find向上查父节点就是他们最近的子树根节点，就是答案
+
+```
+const int maxn = 10005;
+int x, y, res, pre[maxn],head[maxn],n,du[maxn];
+struct node {
+	int to;
+	int next;
+}p[maxn];
+int Find(int x) {
+	if (pre[x] == x)return pre[x];
+	return pre[x] = Find(pre[x]);
+}
+void tarjan(int u) {
+	pre[u] = u;
+	for (int i = head[u]; i != -1; i = p[i].next) {
+		int v = p[i].to;
+		tarjan(v);
+		pre[v] = u;
+	}
+	if (u == x || u == y) {
+		if (u != x)swap(x, y);
+		if (pre[y])res = Find(pre[y]);
+	}
+
+}
+//邻接表存图
+scanf("%d%d", &x, &y);
+			p[tot].to = y;
+			p[tot].next = head[x];
+			head[x] = tot++;
+			du[y]++;
+```
