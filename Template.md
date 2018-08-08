@@ -378,3 +378,121 @@ void EXKMP() {
 	}
 }
 ```
+
+### Treap
+-  [treap详解](https://blog.csdn.net/u014634338/article/details/49612159)
+
+```
+typedef  struct TreapNode* Tree;
+typedef long long ll;
+struct TreapNode {
+	int val;
+	int priority;
+	Tree lchild;
+	Tree rchild;
+	int lsize;
+	int rsize;
+	TreapNode(int val = 0, int priority = 0) {
+		lchild = rchild = NULL;
+		lsize = rsize = 0;
+		this->val = val;
+		this->priority = priority;
+	}
+};
+void left_rotate(Tree &node) {
+	Tree temp = node->rchild;
+	node->rchild = temp->lchild;
+	node->rsize = temp->lsize;
+	temp->lsize = node->lsize + node->rsize + 1;
+	temp->lchild = node;
+	node = temp;
+}
+void right_rotate(Tree &node) {
+	Tree temp = node->lchild;
+	node->lchild = temp->rchild;
+	node->lsize = temp->rsize;
+	temp->rsize = node->lsize + node->rsize + 1;
+	temp->rchild = node;
+	node = temp;
+}
+bool insert_val(Tree &root, Tree &node) {
+	if (root == NULL) {
+		root = node;
+		return true;
+	}
+	else if (root->val <node->val) {     //相同的也要插入改成<=就行
+		insert_val(root->rchild, node);
+		root->rsize += 1;
+		if (root->priority>node->priority)
+			left_rotate(root);
+		return  true;
+	}
+	else if (root->val>node->val) {
+		insert_val(root->lchild, node);
+		root->lsize += 1;
+		if (root->priority>node->priority)
+			right_rotate(root);
+		return true;
+	}
+}
+bool insert(Tree &root, int val, int priority) {
+	Tree node = new TreapNode(val, priority);
+	return insert_val(root, node);
+}
+//删除
+bool remove(Tree &root, int val)
+{
+
+	if (root->val>val) {
+		root->lsize -= 1;
+		return remove(root->lchild, val);
+	}
+	else if (root->val<val) {
+		root->rsize -= 1;
+		return remove(root->rchild, val);
+	}
+	else
+	{
+
+		if (root->lchild == NULL) {
+			root = root->rchild;
+			return true;
+		}
+		else if (root->rchild == NULL) {
+			root = root->lchild;
+
+			return true;
+		}
+		if (root->lchild->priority<root->rchild->priority) {
+			right_rotate(root); root->rsize -= 1;
+			remove(root->rchild, val);
+
+		}
+		else {
+			left_rotate(root); root->lsize -= 1;
+			remove(root->lchild, val);
+
+		}
+	}
+}
+//第k大
+int Kth(Tree root, int val) {
+	if (root == NULL || val <= 0 || val > root->lsize + root->rsize + 1)return 0;
+	if (root->lsize == val - 1)
+		return root->val;
+	else if (root->lsize>val - 1)return Kth(root->lchild, val);
+	else return Kth(root->rchild, val - (root->lsize + 1));
+}
+
+//查找是否存在
+Tree search(Tree &root, int val)
+{
+	if (!root)
+		return NULL;
+	else if (root->val>val)
+		return search(root->lchild, val);
+	else if (root->val<val)
+		return  search(root->rchild, val);
+	return root;
+}
+```
