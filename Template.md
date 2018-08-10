@@ -496,3 +496,114 @@ Tree search(Tree &root, int val)
 	return root;
 }
 ```
+
+### AC自动机
+- [算法详解](https://blog.csdn.net/liu940204/article/details/51347064)
+```
+// HDU 2222 模板题 HDU3065
+#define _CRT_SECURE_NO_DEPRECATE
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<stdio.h>
+#include<queue>
+#include<algorithm>
+using namespace std;
+const int maxn=1e6 + 5;
+struct node {
+    int cnt;
+    node *fail;
+    node *nxt[26];
+    node() {
+        cnt = 0;
+        fail = NULL;
+        for (int i = 0; i < 26; ++i)
+            nxt[i] = NULL;
+    }
+}*que[maxn];
+node *root;
+char s[maxn];
+char t[105];
+void Build_trie(char *s) {
+    node *p, *q;
+    int len = strlen(s);
+    p = root;
+    for (int i = 0; i < len; ++i) {
+        int x = s[i]-'a';
+        if (p->nxt[x] == NULL) {
+            q = new node;
+            p->nxt[x]= q;
+        }
+        p = p->nxt[x];
+    }
+    p->cnt++;
+}
+void Build_AC(node *root) {
+    int head=0, tail = 0;
+    que[head++] = root;
+    while (head != tail) {
+        node *p = NULL;
+        node *q = que[tail++];
+        for (int i = 0; i < 26; ++i) {
+            if (q->nxt[i]) {
+                if (q == root)q->nxt[i]->fail = root;
+                else {
+                    p = q->fail;
+                    while (p) {
+                        if (p->nxt[i] != NULL) {
+                            q->nxt[i]->fail = p->nxt[i];
+                            break;
+                        }
+                        p = p->fail;
+                    }
+                    if (p == NULL)
+                        q->nxt[i]->fail = root;
+                }
+                que[head++] = q->nxt[i];
+            }
+        }
+    }
+}
+int Query(node *root) {
+    int ans = 0;
+    int len = strlen(s);
+    node *p = root;
+    for (int i = 0; i < len; ++i) {
+        int x = s[i] - 'a';
+        while (p!=root&&p->nxt[x] == NULL)p = p->fail;
+        p = p->nxt[x];
+        if (p == NULL)p = root;
+        node *q = p;
+        while (q != root) {
+            if (q->cnt >= 0) {
+                ans += q->cnt;
+                q->cnt = -1;
+            }
+            else break;
+            q = q->fail;
+        }
+    }
+    return ans;
+}
+int main()
+{
+    int k;
+    scanf("%d", &k);
+    while (k--) {
+        root = NULL;
+        root = new node;
+
+        int n;
+        scanf("%d", &n);
+        for (int i = 0; i < n; ++i) {
+            scanf("%s", t);
+            Build_trie(t);
+        }
+        Build_AC(root);
+        scanf("%s", s);
+        int ans = Query(root);
+        printf("%d\n", ans);
+    }
+    return 0;
+}
+```
