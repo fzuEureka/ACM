@@ -327,7 +327,50 @@ scanf("%d%d", &x, &y);
 			p[tot].next = head[x];
 			head[x] = tot++;
 ```
+```
+:多对点求lca
+void tarjan(int u){
+	pre[u]=u;
+	vis[u]=true;
+	for(int i=0;i<G[u].size();++i){
+		int v=G[u][i];
+		if(!vis[v]){
+			tarjan(v);
+			pre[v]=u;
+		}
+	}
+	for(int i=0;i<F[u].size();++i){
+		int v=F[u][i].first; // vector<pii>F[maxn]; first v,second 编号 第i对点 
+		if(vis[v]){
+			ans[F[u][i].second]=find_set(v);
+		}
+	}
+}
+```
 
+### 最小生成树
+```
+struct node{
+	ll cost;
+	int u,v;
+}p[maxn];
+void kruskal(){
+	int k=0;
+	for(int i=1;i<=tot;++i){
+		int u=p[i].u;
+		int v=p[i].v;
+		int fx=find_set(u),fy=find_set(v);
+		if(fx!=fy){
+			pre[fx]=fy;
+			G[u].push_back(v);
+			G[v].push_back(u);
+			k++;
+			if(k==n*m-1)break; 
+		}
+		 
+	}
+}
+```
 ### 扩展kmp 
 - 定义母串S，和字串T，设S的长度为n，T的长度为m，求T与S的每一个后缀的最长公共前缀，也就是说，设extend数组,extend[i]表示T与S[i,n-1]的最长公共前缀，要求出所有extend[i](0<=i<n)。
 - 算法详解 [扩展kmp总结](https://blog.csdn.net/dyx404514/article/details/41831947)
