@@ -1,7 +1,7 @@
 # 模板
 
 ### 马拉车 最大回文串
-```
+```c++
 char s_new[220005],s[110005];
 int p[220005];
 
@@ -29,7 +29,7 @@ int manacher()
 }
 ```
 ### KMP
-```
+```c++
 const int maxn=10000005;
 int kmp_next[maxn];
 void getNext(string p)
@@ -76,7 +76,7 @@ int KMP(string T,string p)
 - 最小点覆盖==最大匹配数 |最小点集|=|最大匹配|
 - 最小路径覆盖==总点集合G-最大匹配数
 -  |最大独立集| = |V|-|最大匹配数|
-```
+```c++
 const int maxn=1e5;
 int vis[maxn],match[maxn];
 vector<int>G[maxn];
@@ -103,7 +103,7 @@ int search(){
 }
 ```
 ### 线段树
-```
+```c++
 const int maxn=1e5+7;
 long long sum[maxn<<2],add[maxn<<2];
 long long a[maxn],n,rt=1;
@@ -172,7 +172,7 @@ long long Query(int L,int R,int l,int r,int rt){
 ```
 
 ### Tarjan 缩点
-```
+```c++
 int n,m,top,tot,sum,stk[maxn],color[maxn],cnt[maxn],dfn[maxn],low[maxn],vis[maxn],du[maxn];
 void tarjan(int v){
     vis[v]=1;
@@ -200,7 +200,7 @@ void tarjan(int v){
 ```
 
 ### 凸包 graham_scan
-```
+```c++
 const int maxn = 1e5 + 5;
 const double PI = acos(-1.0);
 struct point {
@@ -263,7 +263,7 @@ double cal() {
 
 ### st表
 - 区间最大最小值 stmax[i][j] 表示i~i+2^j-1 的最大值
-```
+```c++
 const int maxn = 2e5 + 5;
 int a[maxn], b[maxn], n, stmax[maxn][20], stmin[maxn][20];
 void ST() {
@@ -297,7 +297,7 @@ int queryMax(int s, int e) {
 ### 离线求lca（最近公共祖先） tarjan
 - 对每个节点 利用并查集建一颗子树，搜索道根节点向上回溯，查到第二点的时候find向上查父节点就是他们最近的子树根节点，就是答案
 
-```
+```c++
 const int maxn = 10005;
 int x, y, res, pre[maxn],head[maxn],n,du[maxn];
 struct node {
@@ -327,8 +327,8 @@ scanf("%d%d", &x, &y);
 			p[tot].next = head[x];
 			head[x] = tot++;
 ```
-```
-:多对点求lca
+```c++
+多对点求lca
 void tarjan(int u){
 	pre[u]=u;
 	vis[u]=true;
@@ -349,7 +349,7 @@ void tarjan(int u){
 ```
 
 ### 最小生成树
-```
+```c++
 struct node{
 	ll cost;
 	int u,v;
@@ -375,7 +375,7 @@ void kruskal(){
 - 定义母串S，和字串T，设S的长度为n，T的长度为m，求T与S的每一个后缀的最长公共前缀，也就是说，设extend数组,extend[i]表示T与S[i,n-1]的最长公共前缀，要求出所有extend[i](0<=i<n)。
 - 算法详解 [扩展kmp总结](https://blog.csdn.net/dyx404514/article/details/41831947)
 
-```
+```c++
 typedef long long ll;
 const int maxn = 1e6+5;
 string S, T;
@@ -425,7 +425,7 @@ void EXKMP() {
 ### Treap
 -  [treap详解](https://blog.csdn.net/u014634338/article/details/49612159)
 
-```
+```c++
 typedef  struct TreapNode* Tree;
 typedef long long ll;
 struct TreapNode {
@@ -542,7 +542,7 @@ Tree search(Tree &root, int val)
 
 ### AC自动机
 - [算法详解](https://blog.csdn.net/liu940204/article/details/51347064)
-```
+```c++
 // HDU 2222 模板题 HDU3065
 #define _CRT_SECURE_NO_DEPRECATE
 #include<iostream>
