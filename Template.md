@@ -650,3 +650,43 @@ int main()
     return 0;
 }
 ```
+
+### 康托展开
+- [康托详解](https://zybuluo.com/Junlier/note/1174122)
+```c++
+int n;  //n个数字 
+ll fac[21]; //阶乘 
+int b[21];  //排列 
+//数字转排列 
+void getKT(ll x){
+	ll res;
+	bool vis[21];
+	memset(vis,0,sizeof(vis));
+	for(int i=n;i>=1;--i){
+		res=x/fac[i-1]+1;   //计算该数是没用过的数字中第几大 
+		x=x%fac[i-1];
+		rep(j,1,n+1){
+			if(!vis[j])res--;
+			if(res==0){
+				printf("%d ",j);
+				vis[j]=true;
+				break;
+			}
+		}
+	}
+	printf("\n");
+}
+//排列转数字 
+ll invKT(){
+
+	ll res=0;
+	rep(i,1,n+1){
+		ll cnt=0; 
+		rep(j,i+1,n+1)
+			if(b[i]>b[j])cnt++;  //有多少没用过的数字比她小 
+		res+=cnt*(fac[n-i]);
+	}
+	res++; //加上本身 
+	return res;
+}
+```
