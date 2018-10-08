@@ -347,6 +347,57 @@ void tarjan(int u){
 	}
 }
 ```
+### 在线LCA
+- [lca详解1](https://blog.csdn.net/y990041769/article/details/40887469)
+- [lca详解2](http://www.cnblogs.com/scau20110726/archive/2013/05/26/3100812.html)
+```c++
+const int N=1e5+5;
+int dp[N][20],n;  //dp[i][j] 下标i开始  长度为2^j区间中最小值的下标 
+vector<int> G[N];
+int tot,ver[N<<1],R[N<<1],First[N<<1];
+//ver:节点编号 R：ver中的点下标对应的深度 first：第一次搜到该点在ver数组中的下标 
+bool vis[N]; 
+void dfs(int u,int dep){
+
+	vis[u]=true;ver[++tot]=u;First[u]=tot;R[tot]=dep;
+	for(int i=0;i<G[u].size();++i){
+		int v=G[u][i];
+		if(!vis[v]){
+			dfs(v,dep+1);
+			ver[++tot]=u;
+			R[tot]=dep;
+		}
+	}
+	return;
+}
+void ST(){
+	for(int i=1;i<=tot;++i){
+		dp[i][0]=i;
+	}
+	for(int j=1;(1<<j)<=tot;++j){
+		for(int i=1;i+(1<<j)-1<=tot;i++){
+			int a=dp[i][j-1];
+			int b=dp[i+(1<<(j-1))][j-1];
+			if(R[a]<R[b])dp[i][j]=a;
+			else dp[i][j]=b;
+		}
+		 
+	} 
+}
+int RMQ(int l,int r){
+	int k=0;
+	while((1<<(k+1))<=r-l+1)
+		k++;
+	int a=dp[l][k],b=dp[r-(1<<k)+1][k];
+	return R[a]<R[b]?a:b;
+}
+int LCA(int u,int v){
+	int x=First[u],y=First[v];
+	if(x>y)swap(x,y);
+	int res=RMQ(x,y);
+	return ver[res];
+}
+```
 
 ### 最小生成树
 ```c++
