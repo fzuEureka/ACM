@@ -741,3 +741,115 @@ ll invKT(){
 	return res;
 }
 ```
+### AVL
+- [avl详解](https://www.cnblogs.com/zhuwbox/p/3636783.html)
+```c++
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef pair<ll,ll>pii;
+typedef vector<int>vi;
+
+#define rep(i,a,b) for(int i=(a);i<(b);i++)
+#define fi first
+#define se second
+#define de(x) cout<<#x<<"="<<x<<endl
+#define per(i,a,b) for(int i=(b)-1;i>=(a);--i)
+const int N=1e5+5;
+struct AvlNode{
+	int val;
+	AvlNode *lson;
+	AvlNode *rson;
+	int height;
+};
+typedef AvlNode* AvlTree;
+int Height( AvlTree T)
+{
+     if(T==NULL)
+         return -1;
+    return T->height;
+}
+//传引用才能修改 
+void RotateLeft(AvlTree &T){
+	AvlTree rt=T->rson;
+	T->rson=rt->lson;
+	rt->lson=T;
+ 	T->height = max( Height(T->lson),Height(T->rson) ) + 1;
+    rt->height = max( Height(rt->lson),Height(rt->rson) ) + 1;
+	T=rt;
+}
+void RotateRight(AvlTree &T){
+	AvlTree rt=T->lson;
+	T->lson=rt->rson;
+	rt->rson=T;
+	T->height = max( Height(T->lson),Height(T->rson) ) + 1;
+    rt->height = max( Height(rt->lson),Height(rt->rson) ) + 1;
+	T=rt;
+}
+void RotateLR(AvlTree &T){
+	RotateLeft(T->lson);
+	RotateRight(T);
+} 
+void RotateRL(AvlTree &T){
+	RotateRight(T->rson);
+	RotateLeft(T);
+} 
+AvlTree ins(AvlTree &T,int x){
+	if(T==NULL){
+		T=new AvlNode();
+		T->val=x;
+		T->lson=T->rson=NULL;
+		T->height=0;
+	}
+	else if(x<T->val){
+		T->lson=ins(T->lson,x);
+		if(Height(T->lson)-Height(T->rson)==2){
+			int val=T->lson->val;
+			if(x<val){
+				RotateRight(T);
+			}
+			else RotateLR(T);
+		}
+	} 
+	else if(x>T->val){
+		T->rson=ins(T->rson,x);
+		if(Height(T->rson)-Height(T->lson)==2){
+			int val=T->rson->val;
+			if(x>val){
+				RotateLeft(T);
+				
+			}
+			else RotateRL(T);
+		}	
+	}
+	T->height = max( Height(T->lson),Height(T->rson) ) + 1;
+   
+	return T;
+}
+//查找根到节点的路径
+void find_val(AvlTree T,int x){
+
+
+	if(T->val==x)return;
+	printf("%d ",T->val);
+	if(x<T->val)find_val(T->lson,x);
+	else find_val(T->rson,x);
+}
+int main()
+{
+	int n;
+	AvlTree root=NULL;
+	scanf("%d",&n);
+	int op,x;
+	while(n--){
+		scanf("%d%d",&op,&x);
+		if(op==1){
+			root=ins(root,x);
+		}	
+		else {
+			find_val(root,x);
+			printf("%d\n",x);
+		}
+	}
+}
+```
