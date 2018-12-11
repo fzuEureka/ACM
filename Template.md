@@ -853,3 +853,22 @@ int main()
 	}
 }
 ```
+### 莫比乌斯
+```c++
+void mobi(){
+	mu[1]=1;
+	memset(vis,0,sizeof(vis));
+	for(int i=2;i<N;++i){
+		if(!vis[i]){
+			mu[i]=-1;
+			vis[i]=true;
+			prime[tot++]=i;
+		}
+		for(int j=0;j<tot&&prime[j]*i<N;++j){
+			vis[i*prime[j]]=1;
+			if(i%prime[j]==0)break;
+			mu[i*prime[j]]=-mu[i];
+		}
+	}
+}
+```
