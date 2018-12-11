@@ -111,7 +111,7 @@ long long a[maxn],n,rt=1;
 void PushUp(int rt){
     sum[rt]=sum[rt<<1]+sum[rt<<1|1];
 }
-//树状数组 
+
 void Build(int l,int r,int rt){
 
     if(l==r){
