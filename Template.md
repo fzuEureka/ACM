@@ -872,3 +872,36 @@ void mobi(){
 	}
 }
 ```
+### 树上倍增在线LCA
+```c++
+void dfs(int x){
+	dep[x]=dep[fa[x][0]]+1;
+	for(int i=1;i<=mx;++i)
+		if(fa[x][i-1])
+			fa[x][i]=fa[fa[x][i-1]][i-1];
+	for(int i=0;i<G[x].size();++i){
+		int v=G[x][i].fi;
+		if(v!=fa[x][0]){
+			d[v]=d[x]+G[x][i].se;
+			fa[v][0]=x;
+			dfs(v);
+		}
+	}
+	
+}
+int LCA(int u,int v){
+	if(dep[u]<dep[v])swap(u,v);
+	int dif=dep[u]-dep[v];
+	for(int i=0;i<=mx;++i)
+		if((1<<i)&dif)
+			u=fa[u][i];
+	if(u==v)return u;
+	for(int i=mx;i>=0;--i){
+		if(fa[u][i]!=fa[v][i]){
+			u=fa[u][i];
+			v=fa[v][i];
+		}
+	}
+	return fa[u][0];
+}
+```
