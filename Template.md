@@ -197,6 +197,32 @@ void tarjan(int v){
         top--;
     }
 }
+// 无向图边双
+struct tarjan{
+	int tot=0,cnt=0,tim=0,stk[N],dfn[N],low[N];
+	void Tarjan_EBC(int u,int fa){
+		vis[u]=true;
+		stk[++tot]=u;
+		dfn[u]=low[u]=++tim;
+		for(auto v:G[u]){
+			if(!dfn[v]){
+				Tarjan_EBC(v,u);
+				low[u]=min(low[u],low[v]);
+			}
+			else if(v!=fa&&vis[v])
+				low[u]=min(low[u],dfn[v]);
+		}
+		if(dfn[u]==low[u]){
+			col[u]=++cnt;
+			while(stk[tot]!=u){
+				col[stk[tot]]=cnt;
+				vis[stk[tot]]=false;
+				tot--;
+			}
+			tot--;
+		}
+	}
+};
 ```
 
 ### 凸包 graham_scan
