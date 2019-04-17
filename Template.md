@@ -931,3 +931,39 @@ int LCA(int u,int v){
 	return fa[u][0];
 }
 ```
+
+### 高斯消元（残缺版，只写了一定有解的情况,待补充）
+
+```
+const double eps=-1e9;
+double a[105][105];
+void gauss(int n,int m){
+	//n个方程组，m列  m-1个未知数 
+	int row,col,mxr;
+	for(row=col=1;row<=n&&col<=m;++row,++col){
+		mxr=row;
+		for(int j=row+1;j<=n;++j){
+			if(fabs(a[j][col])>fabs(a[mxr][col]))
+				mxr=j;
+		}
+		swap(a[mxr],a[row]);
+		if(fabs(a[row][col])<eps){
+			row--;
+			continue;
+		}
+		for(int i=row+1;i<=n;++i){  //消成上上角矩阵，要从m->col，因为col的系数是倍数的分母 
+			if(fabs(a[i][col])<eps)continue;
+			for(int j=m;j>=col;--j)
+				a[i][j]-=a[row][j]/a[row][col]*a[i][col];
+		}
+	}	
+	for(int i=n;i>=1;--i){
+		for(int j=i+1;j<m;++j){
+			a[i][m]-=a[j][m]*a[i][j];
+		}
+		if(a[i][i]!=0)
+		a[i][m]/=a[i][i];
+	}
+} 
+```
+
