@@ -934,9 +934,9 @@ int LCA(int u,int v){
 
 ### 高斯消元（残缺版，只写了一定有解的情况,待补充）
 
-```
+```c++
 const double eps=-1e9;
-double a[105][105];
+double a[105][105]; //系数
 void gauss(int n,int m){
 	//n个方程组，m列  m-1个未知数 
 	int row,col,mxr;
