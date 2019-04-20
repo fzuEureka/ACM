@@ -324,54 +324,32 @@ int queryMax(int s, int e) {
 - 对每个节点 利用并查集建一颗子树，搜索道根节点向上回溯，查到第二点的时候find向上查父节点就是他们最近的子树根节点，就是答案
 
 ```c++
-const int maxn = 10005;
-int x, y, res, pre[maxn],head[maxn],n,du[maxn];
-struct node {
-	int to;
-	int next;
-}p[maxn];
-int Find(int x) {
-	if (pre[x] == x)return pre[x];
-	return pre[x] = Find(pre[x]);
-}
-void tarjan(int u) {
-	pre[u] = u;
-	for (int i = head[u]; i != -1; i = p[i].next) {
-		int v = p[i].to;
-		tarjan(v);
-		pre[v] = u;
+//op和G是pair对存边和要求的q对lca,op第二维是第i对要求lca的点对,ans[i]第i对的lca
+struct LCA{
+	vector<pii>G[N],op[N];
+	int pre[N],ans[N],dis[N];
+	bool vis[N];
+	int find_set(int x){
+		if(pre[x]==x)return x;
+		return pre[x]=find_set(pre[x]);
 	}
-	if (u == x || u == y) {
-		if (u != x)swap(x, y);
-		if (pre[y])res = Find(pre[y]);
+	void tarjan(int u){
+		vis[u]=true;
+		for(auto it:G[u]){
+			if(!vis[it.fi]){
+				dis[it.fi]=dis[u]+it.se;
+				tarjan(it.fi);
+				pre[it.fi]=u;
+			} 
+		}
+		for(auto it:op[u]){
+			if(vis[it.fi]){
+				ans[it.se]=find_set(it.fi);
+			}
+		}
 	}
-
-}
-//邻接表存图
-scanf("%d%d", &x, &y);
-			p[tot].to = y;
-			p[tot].next = head[x];
-			head[x] = tot++;
+};
 ```
-```c++
-多对点求lca
-void tarjan(int u){
-	pre[u]=u;
-	vis[u]=true;
-	for(int i=0;i<G[u].size();++i){
-		int v=G[u][i];
-		if(!vis[v]){
-			tarjan(v);
-			pre[v]=u;
-		}
-	}
-	for(int i=0;i<F[u].size();++i){
-		int v=F[u][i].first; // vector<pii>F[maxn]; first v,second 编号 第i对点 
-		if(vis[v]){
-			ans[F[u][i].second]=find_set(v);
-		}
-	}
-}
 ```
 ### 在线LCA
 - [lca详解1](https://blog.csdn.net/y990041769/article/details/40887469)
