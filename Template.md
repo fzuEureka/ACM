@@ -170,7 +170,31 @@ long long Query(int L,int R,int l,int r,int rt){
     return ans;
 }
 ```
-
+### 扫描线+线段树求矩形并面积
+```c++
+struct segment{
+	vector<ll> G; //x坐标的值，用来离散
+	ll sta[N],sum[N]; //sum是区间有效长度，sta是区间状态，不为0说明全被覆盖
+	void pushup(int l,int r,int rt){
+		if(sta[rt]){
+			sum[rt]=G[r]-G[l-1]; //求出原坐标中的长度
+		}	
+		else  if(l==r)sum[rt]=0;
+		else sum[rt]=sum[rt<<1]+sum[rt<<1|1];
+	} 
+	void update(int ql,int qr,int f,int l,int r,int rt){
+		if(ql<=l&&r<=qr){
+			sta[rt]+=f;
+			pushup(l,r,rt);
+			return ;
+		}
+		int mid=(l+r)/2;
+		if(ql<=mid)update(ql,qr,f,l,mid,rt<<1);
+		if(qr>mid)update(ql,qr,f,mid+1,r,rt<<1|1);
+		pushup(l,r,rt);	
+	}
+}tre;
+```
 ### Tarjan 缩点
 ```c++
 int n,m,top,tot,sum,stk[maxn],color[maxn],cnt[maxn],dfn[maxn],low[maxn],vis[maxn],du[maxn];
