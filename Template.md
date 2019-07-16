@@ -102,6 +102,23 @@ int search(){
     return  res;
 }
 ```
+### 二位树状数组求动态二维矩阵和
+``c++
+#define lowbit(a) (a&(-a))
+ll c[N][N];
+void update(int x,int y,int z){
+	for(int i=x;i<=n;i+=lowbit(i))
+		for(int j=y;j<=m;j+=lowbit(j))
+			c[i][j]+=z;
+}
+ll sum(int x,int y){
+	ll ret=0;
+	for(int i=x;i>=1;i-=lowbit(i))
+		for(int j=y;j>=1;j-=lowbit(j))
+			ret+=c[i][j];
+	return ret;
+}
+```
 ### 线段树
 ```c++
 const int maxn=1e5+7;
