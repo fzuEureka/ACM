@@ -989,3 +989,88 @@ void gauss(int n,int m){
 } 
 ```
 
+###  数链剖分
+- 路径上点权修改，动态更新 hud3966
+```c++
+int a[N],top[N],sz[N],dep[N],fa[N],son[N],rk[N]; //fa[i]表示树上编号i的父节点,son[i]节点i的重儿子,top[i]节点i所属重链的链头。
+int n,m,cnt,c[N]; //c[i]表示树上编号i对应到线段树上的编号，rk[i]是线段树上编号i对应的树上的编号。
+int sum[N<<2],add[N<<2];
+void dfs1(int u,int pre,int h){
+	dep[u]=h;
+	fa[u]=pre;
+	sz[u]=1;
+	int mx=0;
+	for(auto v:G[u]){
+		if(v==pre)continue;
+		dfs1(v,u,h+1);
+		sz[u]+=sz[v];
+		if(mx<sz[v])
+			mx=sz[v],son[u]=v;
+	}
+}
+void dfs2(int u,int t){
+	top[u]=t;
+	rk[++cnt]=u;
+	c[u]=cnt;
+	if(son[u]!=-1)dfs2(son[u],t);
+	for(auto v:G[u]){
+		if(v==fa[u]||v==son[u])continue;
+		 dfs2(v,v);
+	}
+}
+void pushUp(int rt){
+	sum[rt]=sum[rt<<1]+sum[rt<<1|1];
+}
+void pushDown(int rt,int ln,int rn){
+	if(add[rt]){
+		add[rt<<1]+=add[rt];
+		add[rt<<1|1]+=add[rt];
+		sum[rt<<1]+=add[rt]*ln;
+		sum[rt<<1|1]+=add[rt]*rn;
+		add[rt]=0;
+	}
+}
+void Build(int l,int r,int rt){
+	if(l==r){
+		sum[rt]=a[rk[l]];
+		return ;
+	}
+	int mid=l+r>>1;
+	if(l<=mid)Build(l,mid,rt<<1);
+	if(r>mid)Build(mid+1,r,rt<<1|1);
+	pushUp(rt);
+}
+void update(int L,int R,int c,int l,int r,int rt){
+	if(L<=l&&R>=r){
+		sum[rt]+=(r-l+1)*c;
+		add[rt]+=c;
+		return ;
+	}
+	int mid=l+r>>1;
+	pushDown(rt,mid-l+1,r-mid);
+	if(L<=mid)update(L,R,c,l,mid,rt<<1);
+	if(R>mid)update(L,R,c,mid+1,r,rt<<1|1);
+	pushUp(rt);
+}
+int query(int L,int R,int l,int r,int rt){
+	if(L<=l&&R>=r){
+		return sum[rt];
+	}
+	int mid=l+r>>1;
+	int ans=0;
+	pushDown(rt,mid-l+1,r-mid);
+	if(L<=mid)ans+=query(L,R,l,mid,rt<<1);
+	if(R>mid)ans+=query(L,R,mid+1,r,rt<<1|1);
+	return ans;
+}
+//更新树上点x到点y路径上的点的点权。 
+void solve(int x,int y,int val){
+	while(top[x]!=top[y]){
+		if(dep[top[x]]<dep[top[y]])swap(x,y);
+		update(c[top[x]],c[x],val,1,n,1);
+		x=fa[top[x]];
+	}
+	if(dep[x]>dep[y])swap(x,y);
+	update(c[x],c[y],val,1,n,1);
+}
+```
