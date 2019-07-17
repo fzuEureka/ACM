@@ -1074,3 +1074,12 @@ void solve(int x,int y,int val){
 	update(c[x],c[y],val,1,n,1);
 }
 ```
+
+### 链式前向星存图
+```c++
+void add_edge(int u,int v){
+	edge[m].to=v;
+	edge[m].nxt=head[u];
+	head[u]=m++; 
+}
+```
