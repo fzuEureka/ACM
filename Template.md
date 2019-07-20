@@ -1083,3 +1083,38 @@ void add_edge(int u,int v){
 	head[u]=m++; 
 }
 ```
+### 线性基
+- [线性基详解](https://blog.csdn.net/a_forever_dream/article/details/83654397)
+- [线性基](https://blog.csdn.net/qaq__qaq/article/details/53812883)
+```c++
+struct LineBase{
+	ll d[N],cnt;
+	void init(){
+		memset(d,0,sizeof(d));
+		cnt=0;
+	}
+	//插入元素
+	void Insert(ll x){
+		for(int i=63;i>=0;--i){
+			if((x>>i)&1){
+				if(!d[i]){
+					d[i]=x;
+					cnt++;
+					break;
+				}
+				else x^=d[i];
+			}
+		}
+	}
+	//是否可以被线性基中已有元素表示，不能就可以插入
+	bool check(ll x){
+		for(int i=63;i>=0;--i){
+			if((x>>i)&1){
+				x^=d[i];
+			}
+		}
+		if(x)return true;
+		return false;
+	}
+}
+```
