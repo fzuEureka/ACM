@@ -1118,3 +1118,126 @@ struct LineBase{
 	}
 }
 ```
+### FFT 高精度乘法
+- [FFT学习](https://zhuanlan.zhihu.com/p/31584464)
+```c++
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef pair<int,int>pii;
+typedef vector<int>vi;
+
+#define rep(i,a,b) for(int i=(a);i<(b);i++)
+#define fi first
+#define se second
+#define de(x) cout<<#x<<"="<<x<<endl;
+#define dd(x) cout<<#x<<"="<<x<<" " ;
+#define pb(x) push_back(x)
+#define per(i,a,b) for(int i=(b)-1;i>=(a);--i)
+const int N=2e5+5;
+const double PI=acos(-1.0);
+int ans[N];
+struct Complex{
+    double r,i;
+    Complex(){r=0,i=0;};
+    Complex(double r,double i):r(r),i(i){};
+    inline Complex operator + (const Complex &b)const{
+        return Complex(r+b.r,i+b.i);
+    }
+    inline Complex operator - (const Complex &b)const{
+        return Complex(r-b.r,i-b.i);
+    }
+    inline Complex operator * (const Complex &b)const{
+        return Complex(r*b.r-i*b.i,r*b.i+i*b.r);
+    }
+    inline void operator /=(const double &x){
+        r/=x,i/=x;
+    }
+    //共轭复数 
+    inline Complex conj(){
+        return Complex(r,-i);
+    }
+};
+
+struct FFT{
+    //单位复数和共轭复数 
+    Complex c[N],revc[N];
+    void init(const int &n){
+        for(int i=0;i<n;++i){
+            c[i]=Complex(cos(2*PI/n*i),sin(2*PI/n*i));
+            revc[i]=c[i].conj();
+        }
+    }
+    void transform(Complex *a,int n,Complex *cc){
+        for(int i=0,j=0;i<n;++i){
+            if(i>j)swap(a[i],a[j]);
+            for(int k=n>>1;(j^=k)<k;k>>=1);
+        }
+        
+        for(int l=2;l<=n;l<<=1){
+            int m=l/2;
+            for(Complex *p=a;p!=a+n;p+=l){
+                for(int i=0;i<m;++i){
+                    Complex t=cc[n/l*i]*p[m+i];
+                    p[m+i]=p[i]-t;
+                    p[i]=p[i]+t; 
+                }
+            }
+        }
+    }
+    //系数转换为点值 
+    void dft(Complex *a,int n){
+        transform(a,n,c);
+    }
+    //点值转换为系数 
+    void idft(Complex *a,int n){
+        transform(a,n,revc);
+        for(int i=0;i<n;++i)a[i]/=n;
+    }
+}ft;
+Complex A[N],B[N];
+char sa[N],sb[N];
+int main()
+{
+    while(~scanf("%s%s",sa,sb)){
+        int len1=strlen(sa);
+        int len2=strlen(sb);
+        int mx=len1+len2,n=1;
+        
+        while(n<=mx){
+            n=n*2;
+        }
+      	memset(ans,0,sizeof(ans));
+		for(int i=0;i<n;++i)
+            A[i]=B[i]=Complex(0,0);
+        for(int i=len1-1,j=0;i>=0;j++,i--){
+            A[j]=Complex(sa[i]-'0',0);
+        }
+        for(int i=len2-1,j=0;i>=0;j++,i--){
+            B[j]=Complex(sb[i]-'0',0);
+        }    
+        ft.init(n);
+        ft.dft(A,n);
+        ft.dft(B,n);
+        for(int i=0;i<n;++i)
+            A[i]=A[i]*B[i];
+        ft.idft(A,n);
+        for(int i=0;i<n;++i)ans[i]=int(A[i].r+0.5);
+        for(int i=0;i<n;++i){
+            ans[i+1]+=ans[i]/10;
+            ans[i]%=10;
+        }
+        int pos=0;
+        for(int i=n;i>=0;--i)
+            if(ans[i]){
+                pos=i;
+                break;
+            }
+        int m=len1+len2-1;
+        for(int i=pos;i>=0;--i)
+            printf("%d",ans[i]);
+        printf("\n");
+    }
+    return 0;
+}
+```
